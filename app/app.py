@@ -1,7 +1,6 @@
-import os
-import sys
+import os, sys
 
-# ─── Ajouter la racine du projet au PYTHONPATH ────────────────────────────────
+# ─── Ajouter la racine du projet ────────────────────────────────────────────────
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
@@ -11,62 +10,49 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import shap
+import joblib
 
-from src.preprocess    import load_data, preprocess_data
-from src.train_model   import load_model, train_lightgbm
-from src.evaluate      import evaluate_model, plot_confusion_matrix
+from src.preprocess  import load_data, preprocess_data
+from src.train_model import load_model, train_lightgbm
 
-# ─── Chargement ou entraînement du modèle ────────────────────────────────────
+# ─── Chargement des données + prétraitement (TOUJOURS exécuté) ────────────────
+df = load_data()
+X_train, X_test, y_train, y_test, scaler = preprocess_data(df)
+
+# ─── Chargement ou (re)entraînement du modèle ─────────────────────────────────
 MODEL_PATH = os.path.join(project_root, 'models', 'lightgbm_model.pkl')
 if os.path.exists(MODEL_PATH):
-    model, scaler = load_model(MODEL_PATH)
+    model, _ = load_model(MODEL_PATH)
 else:
-    # (Re)entraîner si pas de modèle enregistré
-    df = load_data()
-    X_train, X_test, y_train, y_test, scaler = preprocess_data(df)
     model = train_lightgbm(X_train, y_train)
-    # Sauvegarder pour la prochaine fois
-    import joblib
     os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
     joblib.dump((model, scaler), MODEL_PATH)
 
-# ─── Titre de l’application ───────────────────────────────────────────────────
+# ─── Titre et description ─────────────────────────────────────────────────────
 st.title("Breast Cancer Detection with ML + SHAP")
 st.markdown("Entrez les caractéristiques de la tumeur pour obtenir la prédiction et l'explication SHAP.")
 
-# ─── Chargement des données pour définir les sliders ─────────────────────────
-df = load_data()
+# ─── Sliders pour chaque feature ────────────────────────────────────────────────
 features = df.drop('target', axis=1).columns.tolist()
-
-# ─── Création des sliders utilisateur ────────────────────────────────────────
 user_input = {}
 for feat in features:
-    min_val  = float(df[feat].min())
-    max_val  = float(df[feat].max())
-    mean_val = float(df[feat].mean())
-    user_input[feat] = st.slider(feat, min_val, max_val, mean_val)
+    mi, ma, me = float(df[feat].min()), float(df[feat].max()), float(df[feat].mean())
+    user_input[feat] = st.slider(feat, mi, ma, me)
 
 # ─── Bouton de prédiction ─────────────────────────────────────────────────────
 if st.button("Prédire"):
-    X_df     = pd.DataFrame([user_input])
-    X_scaled = scaler.transform(X_df)
+    # 1) Prépare l'entrée
+    X_df        = pd.DataFrame([user_input])
+    X_df_scaled = pd.DataFrame(scaler.transform(X_df), columns=X_df.columns)
 
-    # Prédiction
-    pred = model.predict(X_scaled)
+    # 2) Prédiction
+    pred = model.predict(X_df_scaled)
     st.write("🔬 Prédiction :", "**Malin**" if pred[0] == 1 else "**Bénin**")
 
-    # ─── Explication SHAP ──────────────────────────────────────────────────────
-    # On utilise X_train comme "background dataset" si disponible, sinon X_scaled
-    background = locals().get('X_train', None)
-    explainer  = shap.Explainer(model, background if background is not None else X_scaled)
-    shap_values = explainer(X_scaled)
+    # 3) Explication SHAP (waterfall pour un seul cas)
+    explainer   = shap.Explainer(model, X_train)      # X_train en “background”
+    shap_values = explainer(X_df_scaled)
 
-    # 1) Summary plot (influence globale)
-    fig_summary = plt.figure(figsize=(8, 5))
-    shap.summary_plot(shap_values, X_scaled, show=False)
-    st.pyplot(fig_summary)
-
-    # 2) Waterfall plot (explication individuelle)
-    fig_water = plt.figure(figsize=(8, 5))
+    fig = plt.figure(figsize=(8, 5))
     shap.plots.waterfall(shap_values[0], show=False)
-    st.pyplot(fig_water)
+    st.pyplot(fig)
