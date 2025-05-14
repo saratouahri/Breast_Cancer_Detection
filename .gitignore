@@ -1,0 +1,8 @@
+ __pycache__/
+*.pyc
+.ipynb_checkpoints/
+data/*.csv
+models/*.pkl
+notebook/.ipynb_checkpoints
+Untitled.ipynb/
+Untitled1.ipynb/
