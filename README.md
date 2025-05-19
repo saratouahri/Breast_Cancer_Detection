@@ -40,17 +40,17 @@ pip install -r requirements.txt
 ```
 ## Dataset Sizes
 
- ** Tabular data (Wisconsin Breast Cancer Dataset from scikit-learn): **
+ **Tabular data (Wisconsin Breast Cancer Dataset from scikit-learn):**
 
 569 samples, 30 numeric features
 
- **  Image data (MedMNIST BreastMNIST):  ** 
+ **Image data (MedMNIST BreastMNIST):** 
 
 780 grayscale images (28×28), resized to 224×224
 
 Train / Val / Test split: 546 / 78 / 156 images
 
- **  Multimodal dataset:  ** 
+ **Multimodal dataset:** 
 
 546 paired samples (image + 30-dim feature vector + label)
 
