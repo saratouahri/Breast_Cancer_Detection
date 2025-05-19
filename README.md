@@ -1,8 +1,8 @@
-# Breast Cancer Detection with Machine Learning
+# Breast Cancer Detection with Machine Learning 
 
 A Streamlit app that combines **tabular data** (LightGBM + SHAP explanations) and **biopsy images** (ResNet18 + saliency maps) to predict whether a breast tumor is benign or malignant .
 Features
-
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://breastcancerdetection-gz8mcy2xxs5xsqk55mas9t.streamlit.app/)
  ## Multimodal prediction
 
 ResNet18 on biopsy images
