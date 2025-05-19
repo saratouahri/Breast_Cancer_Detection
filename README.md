@@ -1,6 +1,6 @@
 # Breast Cancer Detection with Machine Learning
 
-A binary classification project to predict whether a breast tumor is benign or malignant using clinical (tabular) features.
+A Streamlit app that combines **tabular data** (LightGBM + SHAP explanations) and **biopsy images** (ResNet18 + saliency maps) to predict whether a breast tumor is benign or malignant .
 
 ---
 ## Project Structure
