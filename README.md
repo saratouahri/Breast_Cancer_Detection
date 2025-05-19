@@ -1,28 +1,42 @@
 # Breast Cancer Detection with Machine Learning
 
-Projet de classification binaire pour prédire si une tumeur du sein est bénigne ou maligne.
+A binary classification project to predict whether a breast tumor is benign or malignant using clinical (tabular) features.
 
-## Structure du projet
-- **data/**: dataset au format CSV
-- **notebooks/**: notebooks d'exploration et d'entraînement
-- **src/**: modules Python réutilisables (prétraitement, entraînement, évaluation, explication)
-- **app/**: application Streamlit interactive
+---
+## Project Structure
+- **data/**: datasets in CSV format  
+- **notebooks/**: exploratory analysis and training notebooks  
+- **src/**: reusable Python modules (preprocessing, training, evaluation, explanation)  
+- **app/**: interactive Streamlit application  
 
 ## Installation
+
 ```bash
-git clone https://github.com/ton-compte/breast_cancer_detection_project.git
-cd breast_cancer_detection_project
+git clone https://github.com/saratouahri/Breast_Cancer_Detection.git
+cd Breast_Cancer_Detection.git
 pip install -r requirements.txt
 ```
-
 ## Usage
-- Lancer les notebooks pour explorer et entraîner
-- `python src/train_model.py` pour entraîner et sauvegarder le modèle
-- `streamlit run app/app.py` pour démarrer l'application web
+Train the model
 
-## Résultats clés
-- Accuracy: ~97%
-- Recall (cancer): ~99%
+```
+python src/train_model.py \
+  --input data/breast_cancer.csv \
+  --output models/lightgbm_model.pkl
 
-## Déploiement
-- Hébergez sur Streamlit Cloud ou Hugging Face Spaces
+```
+Run the Streamlit app
+```
+streamlit run app/app.py
+
+
+```
+## Key Results
+**Confusion Matrix**
+![Confusion matrix of the model](app/cm.png)
+
+
+**Metrics**
+Accuracy: 0.7273
+
+AUC-ROC: 0.7466

@@ -7,3 +7,6 @@ lightgbm
 shap
 streamlit
 joblib
+torch
+torchvision
+pillow
