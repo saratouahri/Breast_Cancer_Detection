@@ -26,7 +26,7 @@ A permanent “How to interpret” sidebar
 
 ---
 ## Project Structure
-- **data/**: datasets in CSV format  
+- **data/**:  contains 10 images to test in the Streamlit app.  
 - **notebooks/**: exploratory analysis and training notebooks  
 - **src/**: reusable Python modules (preprocessing, training, evaluation, explanation)  
 - **app/**: interactive Streamlit application  
